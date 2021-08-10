@@ -1,0 +1,200 @@
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <form class="layui-form" id="searchForm" style="margin-bottom: 20px;">
+            <div class="layui-input-inline" style="width:145px; margin: 8px 0 0 0;">
+              <input type="text" name="username" value="" placeholder="用户名" class="layui-input search_input">
+            </div>
+            <a class="layui-btn layui-btn-normal" style="margin: 8px 0 0 0" id="search_btn">
+              <i class="layui-icon larry-icon">&#xe615;</i>查询
+            </a>
+            <button type="reset" id="reset_btn" class="layui-btn" style="margin: 8px 0 0 0">
+              <i class="layui-icon larry-icon">&#xe666;</i>
+              重置
+            </button>
+            <a class="layui-btn layui-btn-primary" id="add_btn" style="margin: 8px 0 0 0">
+              <i class="layui-icon larry-icon">&#xe654;</i>添加
+            </a>
+          </form>
+          <table class="layui-table" id="test-table-form" lay-filter="table"></table>
+          <script type="text/html" id="operation">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+          </script>
+          <!-- 表格工具栏 -->
+          <!-- <script id="toolbarDemo">
+            <div class="layui-btn-container">
+              <button class="layui-btn layui-btn-sm" lay-event="delete" >
+                删除
+              </button>
+            </div>
+          </script> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  layui.use(['table', 'form'], function () {
+    var table = layui.table, form = layui.form, $ = layui.$;
+
+    //方法渲染
+    //加载table实例
+    var tableRender = table.render({
+      elem: '#test-table-form',
+      url: '/home/userList',
+      method: 'post',
+      cellMinWidth: 80,
+      //sort:true 开启排序
+      cols: [[
+        // { field: 'aa', type: 'checkbox' },//复选框
+        { field: 'hh', type: 'numbers', title: 'ID', width: 50 },//标识
+        { field: 'id', title: '编号', hide: true },
+        { field: 'username', sort: true, title: '用户名', width: 440 },
+        { fixed: 'right', title: '操作', align: 'center', toolbar: '#operation', width: 440 }
+      ]],
+      page: true,
+      done: function (res, curr, count) {
+        if (curr > 1 && res.data.length === 0) { //不是第一页并且没有数据的时候，跳转到前一页
+          var obj = {};
+          var array = $('#searchForm').serializeArray();
+          for (var i = 0; i < array.length; i++) {
+            var item = array[i];
+            obj[item.name] = item.value;
+          }
+
+          tableRender.reload({
+            where: obj,
+            page: {
+              curr: curr - 1 //跳转到前一页
+            }
+          });
+        }
+      }
+    });
+
+    //查询
+    $('#search_btn').on('click', function () {
+      var obj = {};
+      var array = $('#searchForm').serializeArray();
+      for (var i = 0; i < array.length; i++) {
+        var item = array[i];
+        obj[item.name] = item.value;
+      }
+      console.log("tableRender", tableRender);
+      console.log("obj",obj);//username :12
+      tableRender.reload({
+        where: obj,
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+      });
+    });
+
+    //查询
+    // $("#search_btn").click(function () {
+    //   var username = $(".search_input").val();
+    //   var html = '';
+    //   $.get("/home/search", { username: username }, function (data) {
+    //     console.log("data.errCode", data.errCode);
+    //     if (0 === data.errCode) {
+    //       for (var i = 0; i < data.users.length; i++) {
+    //         html += '<tr>' +
+    //           '<td>' + data.users[i].username +
+    //           '</td>' +
+    //           '<td><a class="layui-btn layui-btn-xs" lay-event="edit" userId="' +
+    //           data.users[i].id +
+    //           '">编辑</a>' +
+    //           '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete" userId="' +
+    //           data.users[i].id +
+    //           '">删除</a></td>' +
+    //           '</tr>';
+    //       }
+    //       $('#tbody').html(html);
+    //       layui.use('element', function () {
+    //         var form = layui.form;
+    //         form.init();
+    //       });
+    //     } else if (1 === data.errCode) {
+    //       layer.open({
+    //         title: '提示',
+    //         content: '该用户不存在',
+    //       });
+    //     } else {
+    //       layer.open({
+    //         title: '提示',
+    //         content: '当前无数据',
+    //       });
+    //     }
+    //   })
+    // });
+
+    //进入添加页面
+    $('#add_btn').on('click', function () {
+      parent.window.addTab({
+        title: '添加用户',
+        href: '/home/add'
+      });
+    });
+
+    // //监听表格工具栏
+    // table.on('toolbar(table)', function (obj) {
+    //   var checkStatus = table.checkStatus(obj.config.id);
+    //   console.log(checkStatus);
+    //   console.log(obj.data);
+    //   // $.post('/home/delete', obj.data, function (data) {
+
+    //   // });
+    // });
+
+    //监听事件
+    table.on('tool(table)', function (obj) {
+      console.log("obj", obj);
+      if (obj.event === 'edit') {
+        //标签页打开编辑页面
+        parent.window.addTab({
+          title: '编辑用户',
+          href: '/home/update?userId=' + obj.data.id
+        });
+      } else if (obj.event === 'delete') {
+        layer.confirm('是否确定删除？', { icon: 3, title: '提示' }, function (index) {
+          layer.close(index);
+          var loading = layer.load(1);
+          $.post('/home/delete', obj.data, function (data) {
+            layer.close(loading);
+            if (data.errCode === 0) {
+              layer.msg(data.msg, {
+                icon: 6,
+                time: 1000
+              }, function () {
+
+                var obj = {};
+                var array = $('#searchForm').serializeArray();
+
+                for (var i = 0; i < array.length; i++) {
+                  var item = array[i];
+                  obj[item.name] = item.value;
+                }
+                tableRender.reload({
+                  where: obj
+                });
+
+              });
+            }
+            else {
+              layer.msg(data.msg, { icon: 5 });
+            }
+          });
+        });
+      } else if (obj.event === 'distribution_resource') {
+        parent.window.addTab({
+          title: '分配资源',
+          href: '/admin/xt_role/distribution_resource?role_id=' + obj.data.id
+        });
+      }
+    });
+
+  });
+</script>

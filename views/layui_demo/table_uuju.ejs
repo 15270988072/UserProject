@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>table模块快速使用</title>
+  <link rel="stylesheet" href="/layui/css/layui.css" media="all">
+  <script src="/layui/layui.js"></script>
+</head>
+
+<body>
+
+  <!-- 方法渲染 -->
+  <!-- 准备容器，设置id属性值 -->
+  <table id="demo1" lay-filter="demo"></table>
+
+  <!-- 自动渲染 -->
+  <!-- 
+  1）带有class="layui-table"的table标签
+  2）对标签设置属性lay-data="" 配置一些基础参数
+  3)在th标签中设置属性lay-data=""配置表头信息 -->
+  <!-- <table class="layui-table" lay-data="{url:'/home/userList',method:'post',page:true}"> -->
+  <!-- <thead> -->
+  <!-- <tr> -->
+  <!-- type:'numbers' 添加序号 -->
+  <!-- <th lay-data="{field:'aa',type:'numbers'}">id</th> -->
+  <!-- <th lay-data="{field:'id'}">编号</th> -->
+  <!-- <th lay-data="{field:'username',sort:true}">用户名</th> -->
+  <!-- </tr> -->
+  <!-- </thead> -->
+  <!-- </table> -->
+
+  <!-- 静态表格 -->
+  <!-- <table lay-filter="demo">
+    <thead>
+      <tr>
+        <th lay-data="{field:'id',width:100}">编号</th>
+        <th lay-data="{field:'username',sort:true}">用户名</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>张三</td>
+      </tr>
+    </tbody>
+  </table> -->
+
+  <!-- 表格工具栏 -->
+  <!--lay-event给元素绑定事件名-->
+  <script id="toolbarDemo">
+    <div class="layui-btn-container">
+      <button class="layui-btn layui-btn-sm" lay-event="getCheckData">
+        获取选中行数据
+      </button>
+      <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">
+        获取选中目录
+      </button>
+      <button class="layui-btn layui-btn-sm" lay-event="isAll">
+        验证是否全选
+      </button>
+    </div>
+  </script>
+  <!-- 表头工具栏 -->
+  <script type="text/html" id="toolDemo">
+    <div class="layui-btn-container">
+      <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+      <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+      <button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+    </div>
+  </script>
+</body>
+<script>
+  //加载table模块
+  layui.use('table', function () {
+    var table = layui.table;
+
+    // 方法渲染
+    table.render({
+      elem: '#demo1',//elem属性用来绑定容器的id属性值
+      url: '/home/userList',//数据接口 接受返回的json数据
+      method: 'post',//post提交
+      page: true, //开启分页
+      cols: [[//设置表头
+        // sort:true 设置排序 不设置宽度会占用所有的宽度
+        { field: 'aa', type: 'checkbox' },
+        { field: 'hh', type: 'numbers', title: 'ID', width: 50 },
+        { field: 'id', title: '编号', sort: true, },
+        { field: 'username', title: '用户名', sort: true, width: 800 },
+        { field: '操作', toolbar: '#toolDemo', title: '操作' }
+      ]],
+      toolbar: '#toolbarDemo',//设置表格工具栏
+    });
+
+    // table.init('demo', {
+    //   height: 315
+    // })
+
+    //       头监听事件
+    //       语法：
+    //       table.on('toolbar(demo)',function(obj){
+    //       })
+    // 注：demo表示的是容器上设置的lay-filer属性值
+
+    table.on('toolbar(demo)', function (obj) {
+      // console.log("obj", obj);
+      //obj.config对象中可以获取值id属性值，即表示当前容器的id属性，也就是demo
+      //获取当前表格被选中记录对象，返回数据
+      var checkStatus = table.checkStatus(obj.config.id);
+      console.log(checkStatus);
+      switch (obj.event) {
+        case "getCheckData":
+          //获取值被选择记录的数组
+          var arr = checkStatus.data;
+          //将数组解析成字符串
+          layer.alert(JSON.stringify(arr));
+          break;
+        case "getCheckLength":
+          //获取值被选择记录的数量
+          var arr = checkStatus.data;
+          layer.msg(arr.length);
+          break;
+        case "isAll":
+          if(checkStatus.isAll){
+            layer.msg("ok");
+          }else{
+            layer.msg("no");
+          }
+          break;
+      }
+    })
+  });
+</script>
+
+</html>

@@ -1,0 +1,169 @@
+<html>
+
+<head>
+  <title>表格</title>
+  <!-- 引入layui的核心css文件 -->
+  <link rel="stylesheet" type="text/css" href="E:\sails\user\.tmp\public\layui\css\layui.css" />
+  <script src="E:\sails\user\.tmp\public\layui\layui.js"></script>
+</head>
+
+<body>
+  <!-- 使用form标签需要加载form模块 -->
+  <form class="layui-form">
+    <div class="layui-form-item">
+      <label class="layui-form-label">标题</label>
+      <!-- class="layui-input-block"占据全部的宽度
+      class="layui-input-inline"占据部分的宽度 -->
+      <div class="layui-input-inline">
+        <!-- 文本框 -->
+        <!-- placeholder当没有文本时，默认显示 -->
+        <!-- required 提示是一个必填项 lay-verify="required"表示是一个必填项 不填入提交不了-->
+        <!-- class="layui-input" 提供的通用的样式 -->
+        <!-- autocomplete="off" 设置不自动填充 -->
+        <input type="text" name="titile" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">城市</label>
+      <div class="layui-input-inline">
+        <!-- 下拉框 -->
+        <!-- selected 表示默认选中 -->
+        <!-- disabled 表示禁用该属性 可以设置在select、option下面 这里是禁用了选项 ；可以直接禁用选择框-->
+        <select name="city" lay-verify="required">
+          <option value="">请选择一个城市</option>
+          <option value="010" selected>北京</option>
+          <option value="021" disabled>上海</option>
+          <option value="0571">杭州</option>
+        </select>
+
+        <!-- 分组 -->
+        <!-- 可以通过 optgroup 标签给select分组 -->
+        <select name="quiz">
+          <option value="">请选择</option>
+          <optgroup label="城市记忆">
+            <option value="你工作的第一个城市">你工作的第一个城市？</option>
+          </optgroup>
+          <optgroup label="学生时代">
+            <option value="你的工号">你的工号？</option>
+            <option value="你最喜欢的老师">你最喜欢的老师？</option>
+          </optgroup>
+        </select>
+
+        <!-- 开启搜索匹配 lay-search-->
+        <select name="city" lay-verify="required" lay-search>
+          <option value="">请选择</option>
+          <option value="010">layer</option>
+          <option value="021">form</option>
+          <option value="0571">layim</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">爱好</label>
+      <div class="layui-input-block">
+        <!-- 复选框 -->
+        <!-- 默认效果 -->
+        <!-- 通过tilte属性设置自定义文本 -->
+        <input type="checkbox" name="hobby" title="篮球" value="1" />
+        <input type="checkbox" name="hobby" title="羽毛球" value="2" />
+        <input type="checkbox" name="hobby" title="游泳" value="3" />
+        <br>
+        <!-- 原始效果 -->
+        <!-- disabled禁用该选项-->
+        <!-- 通过checked属性设置默认被选择 -->
+        <!-- 通过lay-skin属性设置复选框的样式效果（lay-skin="primary"表示原始） -->
+        <input type="checkbox" name="hobby" title="篮球" lay-skin="primary" checked />
+        <input type="checkbox" name="hobby" title="羽毛球" lay-skin="primary" disabled />
+        <input type="checkbox" name="hobby" title="游泳" lay-skin="primary" />
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">开关</label>
+      <div class="layui-input-block">
+        <!-- 通过lay-skin="switch"形成开关风格 -->
+        <input type="checkbox" name="kg" title="小灯泡" lay-skin="switch">
+        <!-- 通过checked属性设置默认被选择 -->
+        <input type="checkbox" name="kg" title="小灯泡" lay-skin="switch" checked>
+        <!-- 可以通过lal-text设置打开关闭显示的文本 lay-text="打开的值|关闭的值" -->
+        <!-- disabled禁用该选项-->
+        <!-- 当开关打开并点击提交，会将value的值提交 -->
+        <input type="checkbox" name="kg" title="小灯泡" lay-skin="switch" checked lay-text="ON|OFF" value="小灯泡">
+        <input type="checkbox" name="kg" title="小灯泡" lay-skin="switch" disabled checked lay-text="打开|关闭">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">单选框</label>
+      <div class="layui-input-block">
+        <input type="radio" name="sex" value="nan" title="男">
+        <input type="radio" name="sex" value="nv" title="女" checked>
+        <input type="radio" name="sex" value="" title="中性">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">自定义</label>
+      <div class="layui-input-inline">
+        <input type="text" required lay-verify="username111" placeholder="请输入用户名" class="layui-input">
+        <input type="password" lay-verify="pass" required class="layui-input" placeholder="请输入密码">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">标题</label>
+      <div class="layui-input-inline">
+        <input type="text" name="titile" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+
+
+    <!-- 按钮 -->
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+  <script>
+    // 加载form模块
+    layui.use("form", function () {
+      var form = layui.form;
+
+      form.verify({
+        username111: function (value, item) { //value：表单的值、item：表单的DOM对象
+          if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+            return '用户名不能有特殊字符';
+          }
+          if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+            return '用户名首尾不能出现下划线\'_\'';
+          }
+          if (/^\d+\d+\d$/.test(value)) {
+            return '用户名不能全为数字';
+          }
+
+          //如果不想自动弹出默认提示框，可以直接返回 true，这时你可以通过其他任意方式提示（v2.5.7 新增）
+          if (value === 'xxx') {
+            alert('用户名不能为敏感词');
+            return true;
+          }
+        }
+
+        //我们既支持上述函数式的方式，也支持下述数组的形式
+        //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+        , pass: [
+          /^[\S]{6,12}$/
+          , '密码必须6到12位，且不能出现空格'
+        ]
+      });
+
+    })
+  </script>
+</body>
+
+</html>

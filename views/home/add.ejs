@@ -1,0 +1,65 @@
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-card-body" style="padding: 15px;">
+      <form class="layui-form">
+        <div class="layui-form-item">
+          <label class="layui-form-label">用户名</label>
+          <div class="layui-input-block">
+            <input type="text" name="username" required lay-verify="username" placeholder="请输入用户名" autocomplete="off"
+              class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item layui-layout-admin">
+          <div class="layui-input-block">
+            <div class="layui-footer" style="left: 0;">
+              <a class="layui-btn" lay-submit lay-filter="formDemo">立即提交</a>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use('form', function () {
+    var form = layui.form;
+    var $ = layui.$;
+
+    /* 自定义验证规则 */
+    form.verify({
+      username: function (value, item) {
+        if (!value.trim()) {
+          return '用户名不能为空';
+        }
+      },
+    });
+
+    //监听提交
+    form.on('submit(formDemo)', function (data) {
+      var loading = layer.load(1);//加载风格，支持0-2
+
+      var fields = data.field;
+      for (var i in fields) {
+        if (!fields[i]) {
+          delete fields[i];
+        }
+      }
+
+      $.post("/home/add", data.field, function (result) {
+        layer.close(loading);//关闭进度条
+        if (0 === result.errCode) {
+          layer.msg("添加成功", {
+            icon: 6,
+            time: 2000
+          }, function () {
+            window.location.reload();//刷新页面
+          });
+        } else {
+          layer.msg("用户名已存在", { icon: 5 });
+        }
+      })
+    });
+  });
+</script>

@@ -1,0 +1,120 @@
+<div class="layui-card layadmin-header">
+</div>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <form class="layui-form" id="searchForm" style="margin-bottom: 20px;">
+            <div class="layui-input-inline" style="width:145px; margin: 8px 0 0 0;">
+              <input type="text" name="mobile_num" value="" placeholder="手机号" class="layui-input search_input">
+            </div>
+            <a class="layui-btn layui-btn-normal" style="margin: 8px 0 0 0" id="search_btn">
+              <i class="layui-icon larry-icon">&#xe615;</i>查询
+            </a>
+            <button type="reset" id="reset_btn" class="layui-btn" style="margin: 8px 0 0 0"><i class="layui-icon larry-icon">&#xe666;</i>
+              重置
+            </button>
+          </form>
+          <table style="margin-top: 20px;" class="layui-hide" id="test-table-form" lay-filter="table"></table>
+          <script type="text/html" id="mobile_num">
+            {{ '+' + d.area_code + " " + d.mobile_num }}
+          </script>
+          <script type="text/html" id="createdAt">
+            {{ dayjs(d.createdAt).format('lll') }}
+          </script>
+          <script type="text/html" id="type">
+            {{ d.type === 0 ? '验证码' : '通知短信' }}
+          </script>
+          <script type="text/html" id="status">
+            {{ d.type === 0 ? '可用' : '失效' }}
+          </script>
+          <script type="text/html" id="read_time">
+            {{#  if(d.read_time){ }}
+            {{ dayjs(d.read_time).format('lll') }}
+            {{#  } else { }}
+            <span style="color: #FFB800;">未读</span>
+            {{#  } }}
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  dayjs.extend(dayjs_plugin_localizedFormat);
+  layui.use(['table', 'form'], function () {
+    var table = layui.table, form = layui.form, $ = layui.$;
+    var tableRender = table.render({
+      elem: '#test-table-form',
+      url: '/admin/message/sms_list',
+      method: 'post',
+      cellMinWidth: 80,
+      autoSort: false,
+      cols: [[
+        {field:'area_code', title: '区号', width: 60, textAlign: 'center'},
+        {field:'mobile_num', title: '号码', width: 140},
+        {field:'check_code', title: '验证码', width: 100},
+        {field:'text', title: '内容'},
+        {field:'type', title: '短信类型', templet: "#type", width: 100},
+        {field:'status', title: '状态', templet: "#status", width: 60},
+        {field:'createdAt', title: '发送时间', templet: "#createdAt", sort: true, width: 190},
+        {field: 'ip', title: '发送IP', width: 150},
+      ]],
+      page: true,
+      done: function(res, curr, count) {
+        if (curr > 1 && res.data.length === 0) { //不是第一页并且没有数据的时候，跳转到前一页
+          var obj = {};
+          var array = $('#searchForm').serializeArray();
+          for (var i = 0; i < array.length; i++) {
+            var item = array[i];
+            obj[item.name] = item.value;
+          }
+
+          tableRender.reload({
+            where: obj,
+            page: {
+              curr: curr - 1 //跳转到前一页
+            }
+          });
+        }
+      }
+    });
+
+    table.on('sort(table)', function(sort) {
+      console.log(sort);
+      var obj = {};
+      var array = $('#searchForm').serializeArray();
+      for (var i = 0; i < array.length; i++) {
+        var item = array[i];
+        obj[item.name] = item.value;
+      }
+      if (sort.type) {
+        obj.sort = {};
+        obj.sort[sort.field] = sort.type;
+      }
+      
+      tableRender.reload({
+        initSort: sort,
+        where: obj
+      });
+    });
+
+    $('#search_btn').on('click', function () {
+      var obj = {};
+      var array = $('#searchForm').serializeArray();
+      for (var i = 0; i < array.length; i++) {
+        var item = array[i];
+        obj[item.name] = item.value;
+      }
+
+      tableRender.reload({
+        where: obj,
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+      });
+    });
+
+  });
+</script>
